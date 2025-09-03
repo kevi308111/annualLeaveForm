@@ -1,10 +1,5 @@
-import NextAuth, { type NextAuthOptions } from 'next-auth';
-import { SupabaseAdapter } from '@next-auth/supabase-adapter';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import { createClient } from '@/app/lib/supabase/server';
-import * as bcrypt from 'bcryptjs'; // Replaced bcrypt with bcryptjs
-
-const authOptions: NextAuthOptions = {
+import NextAuth from 'next-auth';
+import { authOptions } from '@/app/lib/auth';
   adapter: SupabaseAdapter({
     url: process.env.NEXT_PUBLIC_SUPABASE_URL!,
     secret: process.env.SUPABASE_SERVICE_ROLE_KEY!,
@@ -44,8 +39,7 @@ const authOptions: NextAuthOptions = {
         }
 
         // Compare provided password with stored hashed password
-        import NextAuth from 'next-auth';
-import { authOptions } from '@/app/lib/auth'; // Import authOptions from lib/auth.ts
+        
 
         if (!passwordMatch) {
           throw new Error('密碼不正確。'); // Custom message for incorrect password
