@@ -1,10 +1,10 @@
-import NextAuth, { type NextAuthOptions } from 'next-auth';
+import { type NextAuthOptions } from 'next-auth';
 import { SupabaseAdapter } from '@next-auth/supabase-adapter';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { createClient } from '@/app/lib/supabase/server';
-import * as bcrypt from 'bcryptjs'; // Replaced bcrypt with bcryptjs
+import * as bcrypt from 'bcryptjs';
 
-const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   adapter: SupabaseAdapter({
     url: process.env.NEXT_PUBLIC_SUPABASE_URL!,
     secret: process.env.SUPABASE_SERVICE_ROLE_KEY!,
@@ -18,15 +18,14 @@ const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.username || !credentials.password) {
-          return null; // Return null for missing credentials
+          return null;
         }
 
         const supabase = createClient();
 
-        // Fetch user from your 'Employee' table, including the password
         const { data: employee, error } = await supabase
           .from('Employee')
-          .select('*, role, password') // Added password to select
+          .select('*, role, password')
           .eq('username', credentials.username)
           .single();
 
@@ -43,15 +42,12 @@ const authOptions: NextAuthOptions = {
           throw new Error('查無使用者，請聯絡管理員。');
         }
 
-        // Compare provided password with stored hashed password
-        import NextAuth from 'next-auth';
-import { authOptions } from '@/app/lib/auth'; // Import authOptions from lib/auth.ts
+        const passwordMatch = await bcrypt.compare(credentials.password, employee.password);
 
         if (!passwordMatch) {
-          throw new Error('密碼不正確。'); // Custom message for incorrect password
+          throw new Error('密碼不正確。');
         }
 
-        // If employee is found and password matches
         return {
           id: employee.id,
           name: employee.name,
@@ -82,7 +78,3 @@ import { authOptions } from '@/app/lib/auth'; // Import authOptions from lib/aut
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
-
-const handler = NextAuth(authOptions);
-
-export { handler as GET, handler as POST };
