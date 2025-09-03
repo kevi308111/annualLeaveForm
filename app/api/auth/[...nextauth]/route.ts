@@ -4,7 +4,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { createClient } from '@/app/lib/supabase/server';
 import * as bcrypt from 'bcryptjs'; // Replaced bcrypt with bcryptjs
 
-export const authOptions: NextAuthOptions = {
+const authOptions: NextAuthOptions = {
   adapter: SupabaseAdapter({
     url: process.env.NEXT_PUBLIC_SUPABASE_URL!,
     secret: process.env.SUPABASE_SERVICE_ROLE_KEY!,
