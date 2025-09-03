@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { createClient } from "@/app/lib/supabase/client";
 import { useSession } from "next-auth/react";
 import { isBefore, parseISO, differenceInDays, differenceInMinutes, eachDayOfInterval, isWeekend, isAfter } from 'date-fns';
-import { formatDuration } from "@/app/lib/utils";
+
 import {
   Box,
   Button,
@@ -121,6 +121,14 @@ const leaveRequestSchema = z
 type LeaveRequestFormData = z.infer<typeof leaveRequestSchema>;
 
 export default function NewLeaveRequestPage() {
+  return (
+    <Suspense fallback={<div>Loading form...</div>}>
+      <NewLeaveRequestFormContent />
+    </Suspense>
+  );
+}
+
+function NewLeaveRequestFormContent() {
   const { data: session } = useSession();
   const {
     register,

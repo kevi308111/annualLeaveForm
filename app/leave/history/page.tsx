@@ -16,6 +16,8 @@ import {
   Td,
   TableContainer,
   Badge,
+  HStack,
+  Button,
 } from '@chakra-ui/react';
 
 interface LeaveRequest {
@@ -64,7 +66,11 @@ export default function LeaveHistoryPage() {
         if (error) {
           throw error;
         }
-        setLeaveRequests(data || []);
+        const processedData = data?.map(request => ({
+          ...request,
+          Employee: request.Employee && request.Employee.length > 0 ? request.Employee[0] : null
+        })) || [];
+        setLeaveRequests(processedData);
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -139,20 +145,7 @@ export default function LeaveHistoryPage() {
                       {request.status}
                     </Badge>
                   </Td>
-                  {session?.user?.role === 'admin' && (
-                    <Td>
-                      {request.status === 'pending' && (
-                        <HStack spacing={2}>
-                          <Button size="xs" colorScheme="green" onClick={() => handleUpdateRequestStatus(request.id, 'approved')}>
-                            核准
-                          </Button>
-                          <Button size="xs" colorScheme="red" onClick={() => handleUpdateRequestStatus(request.id, 'rejected')}>
-                            駁回
-                          </Button>
-                        </HStack>
-                      )}
-                    </Td>
-                  )}
+
                 </Tr>
               ))}
             </Tbody>

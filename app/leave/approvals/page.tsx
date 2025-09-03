@@ -237,7 +237,7 @@ export default function LeaveApprovalsPage() {
         } else {
           let deductionAmount = request.duration;
           // Convert hourly leave duration to days for deduction if it's an hourly annual leave
-          if (request.isHourly && request.durationUnit === '小時') {
+          if (request.durationUnit === '小時') {
             // Assuming 8 hours per workday for conversion
             deductionAmount = request.duration / 8;
           }
